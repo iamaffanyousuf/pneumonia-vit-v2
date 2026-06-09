@@ -7,10 +7,10 @@ data:
 
   img_size: 224
   batch_size: 16
-  num_workers: 0 #will do 2 or 4 in colab
+  num_workers: 2
 
-# save_dir: "/content/drive/MyDrive/pneumonia-vit" --- for colab
-save_dir: "/outputs"
+save_dir: "/content/drive/MyDrive/pneumonia-vit-v2/output"
+# save_dir: "/outputs"
 
 model:
   name: "vit_base_patch16_224"
@@ -20,8 +20,8 @@ model:
   v1_checkpoint: "best_model.pth"
 
 train:
-  epochs: 1
+  epochs: 15
   lr: 0.00001
   weight_decay: 0.01
   lr: 0.00001
-device: "cuda" # change to "cpu" if no GPU
+device: "cuda"
