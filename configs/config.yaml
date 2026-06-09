@@ -1,23 +1,26 @@
 # configs/config.yaml
 
 data:
-  train_dir: "data/raw/train"
-  val_dir: "data/raw/val"
-  test_dir: "data/raw/test"
+  train_csv: "data_v2/metadata/train.csv"
+  val_csv: "data_v2/metadata/val.csv"
+  test_csv: "data_v2/metadata/test.csv"
 
   img_size: 224
   batch_size: 16
-  num_workers: 2
+  num_workers: 0 #will do 2 or 4 in colab
 
-save_dir: "/content/drive/MyDrive/pneumonia-vit"
+# save_dir: "/content/drive/MyDrive/pneumonia-vit" --- for colab
+save_dir: "/outputs"
 
 model:
   name: "vit_base_patch16_224"
-  num_classes: 2
+  num_classes: 8
   pretrained: true
 
+  v1_checkpoint: "best_model.pth"
+
 train:
-  epochs: 15
+  epochs: 1
   lr: 0.00001
   weight_decay: 0.01
   lr: 0.00001

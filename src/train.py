@@ -7,7 +7,7 @@ from tqdm import tqdm
 from collections import Counter
 
 from utils import load_config
-from dataset import get_dataloaders
+from dataset_v2 import get_dataloaders
 from model import get_model
 
 
@@ -63,6 +63,8 @@ def main():
     train_loader, val_loader, _ = get_dataloaders(config)
 
     model = get_model(config).to(device)
+    print("\nModel Head:")
+    print(model.head)
 
     # imbalance fix
     labels = train_loader.dataset.targets
@@ -71,8 +73,13 @@ def main():
     total = sum(class_counts.values())
 
     num_classes = len(class_counts)
-    weights = [1.0 / class_counts.get(i, 1) for i in range(num_classes)]
-    weights = torch.tensor(weights, dtype=torch.float).to(device)
+
+    weights = [total / (num_classes * class_counts[i]) for i in range(num_classes)]
+
+    weights = torch.tensor(
+        weights,
+        dtype=torch.float,
+    ).to(device)
 
     criterion = nn.CrossEntropyLoss(weight=weights)
 
@@ -89,6 +96,22 @@ def main():
     best_acc = 0
     patience = 5
     no_improve = 0
+
+    print("\nClass Weights:")
+
+    CLASS_NAMES = [
+        "Normal",
+        "Pneumonia",
+        "Effusion",
+        "Nodule",
+        "Mass",
+        "Cardiomegaly",
+        "Fibrosis",
+        "Edema",
+    ]
+
+    for i, w in enumerate(weights):
+        print(f"{CLASS_NAMES[i]}: {float(w):.4f}")
 
     for epoch in range(config["train"]["epochs"]):
         print(f"\nEpoch {epoch + 1}/{config['train']['epochs']}")
