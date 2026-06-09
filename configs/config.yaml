@@ -1,9 +1,9 @@
 # configs/config.yaml
 
 data:
-  train_csv: "data_v2/metadata/train.csv"
-  val_csv: "data_v2/metadata/val.csv"
-  test_csv: "data_v2/metadata/test.csv"
+  train_csv: "data_v2/metadata/train_final.csv"
+  val_csv: "data_v2/metadata/val_final.csv"
+  test_csv: "data_v2/metadata/test_final.csv"
 
   img_size: 224
   batch_size: 16
