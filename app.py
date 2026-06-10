@@ -7,6 +7,8 @@ import gradio as gr
 from src.model import get_model
 from src.utils import load_config
 
+from huggingface_hub import hf_hub_download
+
 CLASS_NAMES = [
     "Normal",
     "Pneumonia",
@@ -22,7 +24,13 @@ config = load_config("configs/config.yaml")
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f"Using device: {device}")
 
-model_path = "best_model.pth"
+model_path = hf_hub_download(
+    repo_id="iamaffanyousuf/chest-xray-detection-vit-model",
+    filename="best_model.pth",
+    repo_type="model",
+    cache_dir="models",
+)
+
 model = get_model(config, load_v1=False)
 model.load_state_dict(torch.load(model_path, map_location=device))
 model.to(device)
@@ -40,10 +48,20 @@ transform = transforms.Compose(
 def predict(image: Image.Image):
     if image is None:
         return gr.update(visible=False), gr.update(
-            visible=True, value="⚠️ Please upload an image first."
+            visible=True,
+            value="""
+            <div style="
+                color:#f87171;
+                text-align:center;
+                padding:12px;
+            ">
+            ⚠️ Please upload an image first.
+            </div>
+            """,
         )
 
     image = image.convert("RGB")
+
     tensor = transform(image).unsqueeze(0).to(device)
 
     with torch.no_grad():
@@ -156,12 +174,12 @@ with gr.Blocks(title="Chest X-Ray Disease Classification", css=custom_css) as ap
                 font-weight: 600;
                 color: #cbd5e1;
                 letter-spacing: -0.2px;
-                margin: 0 0 0.4rem;
+                margin: 0.8rem 0 0.4rem;
                 filter: grayscale(1) brightness(1.4);
             ">
-                🫁 Chest X-Ray Detection AI
+                🫁 Chest X-Ray Analyzer AI
             </h1>
-            <p style="color:#64748b; font-size:0.93rem; margin:0;">
+            <p style="color:#64748b; font-size:1.3rem; margin:0;">
                 Upload a chest X-ray to detect possible findings using a Vision Transformer model.
             </p>
         </div>
@@ -194,7 +212,7 @@ with gr.Blocks(title="Chest X-Ray Disease Classification", css=custom_css) as ap
                 <h3>⚠️ Important Notes</h3>
                 <ul>
                     <li>Model trained on <strong>8 classes</strong>: Normal, Pneumonia, Effusion, Nodule, Mass, Cardiomegaly, Fibrosis, Edema.</li>
-                    <li>Current test accuracy is approximately <strong>76%</strong>.</li>
+                    <li>Current test accuracy is approximately <strong>77%</strong>.</li>
                     <li>Predictions are probability estimates and <strong>may be incorrect</strong>.</li>
                     <li>For <strong>educational and research purposes only</strong> — not for clinical diagnosis.</li>
                 </ul>
@@ -206,4 +224,5 @@ with gr.Blocks(title="Chest X-Ray Disease Classification", css=custom_css) as ap
         fn=clear_all, inputs=[], outputs=[image_input, label_output, warn_text]
     )
 
-app.launch()
+if __name__ == "__main__":
+    app.launch()
