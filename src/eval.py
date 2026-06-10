@@ -1,5 +1,10 @@
+import os
+
 import torch
 import numpy as np
+
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 from sklearn.metrics import (
     classification_report,
@@ -20,6 +25,8 @@ CLASS_NAMES = [
     "Fibrosis",
     "Edema",
 ]
+
+os.makedirs("artifacts", exist_ok=True)
 
 
 def evaluate():
@@ -63,22 +70,49 @@ def evaluate():
 
     print(f"\nTest Accuracy: {accuracy:.4f}")
 
-    print("\nClassification Report:")
-    print(
-        classification_report(
-            all_labels,
-            all_preds,
-            target_names=CLASS_NAMES,
-        )
+    report = classification_report(
+        all_labels,
+        all_preds,
+        target_names=CLASS_NAMES,
+    )
+
+    print(report)
+
+    with open(
+        "artifafcts/classification_report.txt",
+        "w",
+    ) as f:
+        f.write(report)
+
+    cm = confusion_matrix(
+        all_labels,
+        all_preds,
     )
 
     print("\nConfusion Matrix:")
-    print(
-        confusion_matrix(
-            all_labels,
-            all_preds,
-        )
+    print(cm)
+
+    plt.figure(figsize=(10, 8))
+
+    sns.heatmap(
+        cm,
+        annot=True,
+        fmt="d",
+        xticklabels=CLASS_NAMES,
+        yticklabels=CLASS_NAMES,
     )
+
+    plt.xlabel("Predicted")
+    plt.ylabel("Actual")
+
+    plt.tight_layout()
+
+    plt.savefig(
+        "artifacts/confusion_matrix.png",
+        dpi=300,
+    )
+
+    plt.close()
 
 
 if __name__ == "__main__":
