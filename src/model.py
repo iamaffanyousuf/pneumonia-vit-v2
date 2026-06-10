@@ -2,7 +2,7 @@ import torch
 import timm
 
 
-def get_model(config):
+def get_model(config, load_v1=True):
     model = timm.create_model(
         config["model"]["name"],
         pretrained=config["model"]["pretrained"],
@@ -11,7 +11,7 @@ def get_model(config):
 
     checkpoint_path = config["model"].get("v1_checkpoint")
 
-    if checkpoint_path:
+    if load_v1 and checkpoint_path:
         print(f"Loading V1 checkpoint: {checkpoint_path}")
 
         state_dict = torch.load(

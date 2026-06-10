@@ -63,3 +63,7 @@ Thumbs.db
 # HUGGINGFACE CACHE
 # =========================
 .cache/
+
+# onnx exports
+*.onnx
+*.onnx.data

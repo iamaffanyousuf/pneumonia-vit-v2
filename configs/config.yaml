@@ -9,8 +9,8 @@ data:
   batch_size: 16
   num_workers: 2
 
-save_dir: "/content/drive/MyDrive/pneumonia-vit-v2/output"
-# save_dir: "/outputs"
+save_dir: "/content/outputs" #during colab training then cp -r to below location
+# save_dir: "/content/drive/MyDrive/pneumonia-vit-v2/"
 
 model:
   name: "vit_base_patch16_224"
